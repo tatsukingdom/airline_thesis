@@ -21,3 +21,6 @@ All heavy files (>100MB) cannot be included in this repository, but I am happy t
 ## Caveat:
 * Don't forget to ssc install ftools gtools.
 * Please let me (=Tatsuki) know if you have any question regarding these files. Also, any improvement ideas will be welcomed, especially with regard to file management and coding here!
+
+
+![Airline Merger](https://s.abcnews.com/images/Business/ht_alaska_airlines_virgin_america_merger_graphic_jc_160404_16x9_992.jpg)
