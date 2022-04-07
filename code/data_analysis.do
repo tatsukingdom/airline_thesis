@@ -10,6 +10,7 @@
 *******************************
 cd "${rep_folder}"
 clear
+/*
 use "input/dta_clean/${dataset}_agg2", clear
 
 gen coupon_num2 = coupon_num if inlist(coupon_num, 1, 4)
@@ -43,7 +44,7 @@ esttab data* using "output/tables/sumstats.tex", replace tex ///
 		coeflabels(fare "\Centerstack{Market airfaree \\ (mean)}" passenger "Total passengers" revenue "Total revenue" lcc_ratio_pre "Ratio of LCC seats" coupon_num "\Centerstack{Number of coupons \\ (mean)}"roundtrip "\Centerstack{Roundtrip \\ (mean of dummy)}" transfer  "\Centerstack{Transfer \\ (mean of dummy)}" restricted "Ratio of restricted tickets" business "Ratio of business-class" first "Ratio of first-class" carrier_total "Total carriers" carrier_total_lcc "Total LCC carriers" market_AS "\Centerstack{Alaska Route \\ (mean of dummy)}" market_VX "\Centerstack{Virgin Route \\ (mean of dummy)}" market_WN "\Centerstack{Southwest Route \\ (mean of dummy)}") ///
 		title("Summary Statistics" \label{sumstats}) ///
 		mtitle("\shortstack{Airport-Pair \\ All \\ All Airlines}" "\shortstack{City-Pair \\ All \\ All Airlines}" "\shortstack{City-Pair \\ Alaska+Virgin Markets \\ All Airlines}"  "\shortstack{City-Pair \\ Alaska+Virgin Markets \\ Alaska+Virgin}")
-
+*/
 
 **********************************************
 *** 7-1-1. First Difference City-Pair ASVX ***

@@ -18,13 +18,13 @@ cd "${rep_folder}"
 log using master, replace
 
 * Run data-cleaning file (You can skip this step to generate results)
-
+/*
 do "${rep_folder}/code/data_clean.do"
 
 do "${rep_folder}/code/data_preagg.do"
 
 do "${rep_folder}/code/data_aggregation.do"
-
+*/
 * Run data-analysis file
 
 do "${rep_folder}/code/analysis.do"
