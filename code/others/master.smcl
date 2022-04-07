@@ -1,0 +1,604 @@
+{smcl}
+{txt}{sf}{ul off}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/tsukik/Downloads/airline_tatsuki/code/others/master.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}21 Feb 2022, 09:32:18
+{txt}
+{com}. 
+. // Change the file directory below.
+. global rep_folder "/Users/tsukik/Downloads/airline_tatsuki" 
+{txt}
+{com}. 
+. global dataset merged
+{txt}
+{com}. 
+. global image_suffix doc
+{txt}
+{com}. 
+. global tables "${c -(}rep_folder{c )-}/output/tables"
+{txt}
+{com}. 
+. global figs "${c -(}rep_folder{c )-}/output/figs"
+{txt}
+{com}. 
+. * Run data-cleaning file (You can skip the following two lines)
+. 
+. do "${c -(}rep_folder{c )-}/code/data_clean.do"
+{txt}
+{com}. // Data Cleaning File for DB1B public database
+. // Name: Tatsuki Kikugawa
+. 
+. cd "${c -(}rep_folder{c )-}/input"
+{res}/Users/tsukik/Downloads/airline_tatsuki/input
+{txt}
+{com}. 
+. *** 0. Data merger
+. /*
+> use "dta_raw/public201503", clear
+> 
+> local quarter 201503 201506 201509 201512 201603 201606 201609 201612 201703 201706 201709 201712 201803 201806 201809 201812 201903 201906 201909 201912 
+> 
+> disp `"`quarter'"'
+> *201503 201506 201509 201512 201603 201606 201609 201612 201703 201706 201709 201712 201803 201806 201809 201812 201903 201906 201909 201912
+> 
+> foreach q of local quarter {c -(}
+>         append using "dta_raw/public`q'"
+> {c )-}
+> save "dta_clean/merged", replace
+> */
+. 
+. use "dta_clean/${c -(}dataset{c )-}", clear
+{txt}
+{com}. 
+. 
+. *** 1.Drop unnecessary variables
+. drop airport_id trip report_carrier airport_id2* ticketed* trip*
+{txt}
+{com}. 
+. 
+. *** 2. Rename columns in a convenient manner
+. order dollar_id airport_city_code city_market_id state_id opeartin_carrier coupon fare_type distance airport_city city_market_id2 state_id2, after(num_passenger)
+{txt}
+{com}. 
+. rename (index-state_id2_3) (index fare quarter coupon_num passenger dollar_id airport0 city0 state0 carrier1 coupon1 fare_type1 distance1 airport1 city1 state1 carrier2 coupon2 fare_type2 distance2 airport2 city2 state2 carrier3 coupon3 fare_type3 distance3 airport3 city3 state3 carrier4 coupon4 fare_type4 distance4 airport4 city4 state4)
+{res}{txt}
+{com}. 
+. label variable airport0 "Origin Airport Code (3 characters)"
+{txt}
+{com}. label variable city0 "Origin City Market ID (5 digits)"
+{txt}
+{com}. label variable state0 "State Code (2 digits)"
+{txt}
+{com}. 
+. 
+. *** 3. Convert variables to a usable form
+. *Convert to numerics (Destring/Dummy)
+. *destring fare quarter coupon_num passenger city0 state0, replace
+. local vars fare quarter coupon_num passenger city0 state0
+{txt}
+{com}. foreach m of local vars {c -(}
+{txt}  2{com}.         gen long `m'Temp = real(`m')
+{txt}  3{com}.         order `m'Temp, after(`m')
+{txt}  4{com}.         drop `m'
+{txt}  5{com}.         rename `m'Temp `m'
+{txt}  6{com}. {c )-}
+{res}{txt}
+{com}. 
+. forvalues n=1/4 {c -(}
+{txt}  2{com}.         **Set our default is restriced coach class (X): restriced
+.         gen restricted`n'=1 if inlist(fare_type`n', "F", "C", "Y")
+{txt}  3{com}.         replace restricted`n'=0 if inlist(fare_type`n', "G", "D", "X")
+{txt}  4{com}.         *tab fare_type`n' restricted`n', m
+.         gen business`n'=1 if inlist(fare_type`n', "C", "D")
+{txt}  5{com}.         replace business`n'=0 if inlist(fare_type`n', "F", "G", "X", "Y")
+{txt}  6{com}.         *tab fare_type`n' business`n', m
+.         gen first`n'=1 if inlist(fare_type`n', "F", "G")
+{txt}  7{com}.         replace first`n'=0 if inlist(fare_type`n', "C", "D", "X", "Y")
+{txt}  8{com}.         *tab fare_type`n' first`n', m
+.         
+.         **destring variables: distance, city state
+.         *destring distance`n' city`n' state`n', replace
+.         local vars distance`n' city`n' state`n'
+{txt}  9{com}.         foreach m of local vars {c -(}
+{txt} 10{com}.                 gen long `m'Temp = real(`m')
+{txt} 11{com}.                 order `m'Temp, after(`m')
+{txt} 12{com}.                 drop `m'
+{txt} 13{com}.                 rename `m'Temp `m'
+{txt} 14{com}.         {c )-}
+{txt} 15{com}. {c )-}
+{txt}(67,576,110 missing values generated)
+(67,544,586 real changes made)
+(84,164,450 missing values generated)
+(84,132,926 real changes made)
+(81,146,659 missing values generated)
+(81,115,135 real changes made)
+{res}{txt}(71,148,691 missing values generated)
+(57,447,581 real changes made)
+(84,539,732 missing values generated)
+(70,838,622 real changes made)
+(82,391,992 missing values generated)
+(68,690,882 real changes made)
+(12,060,216 missing values generated)
+{res}{txt}(12,060,216 missing values generated)
+{res}{txt}(12,060,216 missing values generated)
+{res}{txt}(80,030,862 missing values generated)
+(25,462,183 real changes made)
+(85,317,839 missing values generated)
+(30,749,160 real changes made)
+(84,758,813 missing values generated)
+(30,190,134 real changes made)
+(53,429,924 missing values generated)
+{res}{txt}(53,429,924 missing values generated)
+{res}{txt}(53,429,924 missing values generated)
+{res}{txt}(81,121,590 missing values generated)
+(20,682,968 real changes made)
+(85,388,747 missing values generated)
+(24,950,125 real changes made)
+(84,996,089 missing values generated)
+(24,557,467 real changes made)
+(60,298,046 missing values generated)
+{res}{txt}(60,298,046 missing values generated)
+{res}{txt}(60,298,046 missing values generated)
+{res}{txt}
+{com}. 
+. 
+. 
+. *** 4. Select samples
+. drop if dollar_id == "*" //questionable fare value
+{txt}(438,416 observations deleted)
+
+{com}. drop if coupon_num>4 //more than 4 coupons are excluded
+{txt}(2,782,910 observations deleted)
+
+{com}. 
+. 
+. drop opeartin_carrier_4-state_id2_15 dollar_id coupon1 coupon2 coupon3 coupon4
+{txt}
+{com}. 
+. 
+. /*
+> egen IQRfare=iqr(fare), by(fare_type1 fare_type2 fare_type3 fare_type4)
+> egen P25fare=pctile(fare), p(25) by(fare_type1 fare_type2 fare_type3 fare_type4)
+> egen P75fare=pctile(fare), p(75) by(fare_type1 fare_type2 fare_type3 fare_type4)
+> gen Ifare=(fare>P75empGR+3*IQRempGR | fare<P25fare-3*IQRfare) if fare<. & IQRfare <. & P25fare<. & P75fare<. 
+> gen fareI= fare if Ifare!=1
+> drop IQRfare P25fare P75fare
+> // Extreme outliers are excluded: defined as values that are (a) greater than the 75th percentile plus 3 times the IQR or (b) less than the 25th percentile minus 3 times the IQR
+> 
+> *==============================================================================
+> 
+> prog def out3IQR
+>     dis "3*IQR outliers for `1' by `2' `3' `4' `5' `6'"
+>         qui egen IQR`1'=iqr(`1'), by(`2' `3' `4' `5' `6')
+>         qui egen P25`1'=pctile(`1'), p(25) by(`2' `3' `4' `5' `6')
+>         qui egen P75`1'=pctile(`1'), p(75) by(`2' `3' `4' `5' `6')
+>         qui gen I`1'=(`1'>P75`1'+3*IQR`1' | `1'<P25`1'-3*IQR`1') if ///
+>                 `1'<. & IQR`1'<. & P25`1'<. & P75`1'<.
+>         qui gen `1'I=`1' if I`1'!=1
+>         drop IQR`1' P25`1' P75`1'
+> end
+> out3IQR fare_type1 fare_type2 fare_type3 fare_type4
+> 
+> ****drop if num_passenger<90  fewer than 90 passengers during a quarter.
+> ****drop if coupon=="D" OR coupon=="E"
+> */
+. 
+. drop if fare <= 11 
+{txt}(4,240,892 observations deleted)
+
+{com}. replace index = _n
+{txt}(78,299,743 real changes made)
+
+{com}. 
+. save "dta_clean/${c -(}dataset{c )-}_clean", replace
+{txt}{p 0 4 2}
+(file {bf}
+dta_clean/merged_clean.dta{rm}
+not found)
+{p_end}
+{p 0 4 2}
+file {bf}
+dta_clean/merged_clean.dta{rm}
+saved
+{p_end}
+
+{com}. 
+. 
+. 
+{txt}end of do-file
+
+{com}. 
+. do "${c -(}rep_folder{c )-}/code/data_preagg.do"
+{txt}
+{com}. // Data Pre-Aggregation File for DB1B public database
+. // Name: Tatsuki Kikugawa
+. 
+. use "dta_clean/${c -(}dataset{c )-}_clean", clear
+{txt}
+{com}. 
+. *** 5. Aggregate dataset by airport pair
+. * Goal is
+. * to make code that transforms ticket-level data to airpor-pair, and to city-pair
+. * to apply this code to an actual larger dataset (merged_clean.data) instead of sample
+. gen distance = distance1 + distance2 + distance3 + distance4
+{txt}(57,153,384 missing values generated)
+
+{com}. gen origin = airport0
+{txt}
+{com}. gen destination_final = airport1
+{txt}
+{com}. replace destination_final = airport2 if !missing(airport2)
+{txt}(66,873,859 real changes made)
+
+{com}. replace destination_final = airport3 if !missing(airport3)
+{txt}(27,479,850 real changes made)
+
+{com}. replace destination_final = airport4 if !missing(airport4)
+{txt}(21,146,364 real changes made)
+
+{com}. 
+. *** Construct an algorithm to identify destination and 
+. *** Also this aims to find one-way trip with no more than one stop and symmetric round-trip
+. gen destination = ""
+{txt}(78,299,748 missing values generated)
+
+{com}. gen roundtrip = .
+{txt}(78,299,748 missing values generated)
+
+{com}. 
+. * one coupon
+. replace destination = airport1 if coupon_num == 1 
+{txt}variable {bf}{res}destination{sf}{txt} was {bf}{res}str1{sf}{txt} now {bf}{res}str3{sf}
+{txt}(11,425,886 real changes made)
+
+{com}. replace roundtrip = 0 if coupon_num == 1
+{txt}(11,425,886 real changes made)
+
+{com}. 
+. * two coupons
+. ** one-way trip with one stop
+. replace destination = airport2 if coupon_num == 2 & airport0 != airport2
+{txt}(16,467,631 real changes made)
+
+{com}. replace roundtrip = 0 if coupon_num == 2 & airport0 != airport2
+{txt}(16,467,631 real changes made)
+
+{com}. ** round-trip with no stop
+. replace destination = airport1 if coupon_num == 2 & airport0 == airport2
+{txt}(22,926,381 real changes made)
+
+{com}. replace roundtrip = 1 if coupon_num == 2 & airport0 == airport2
+{txt}(22,926,381 real changes made)
+
+{com}. 
+. * three coupons
+. *** [assumption1] any ticket involving three coupons are removed!
+. ** one-way trip with two stops or round-trip+one-way trip
+. replace destination = "" if coupon_num == 3 & airport0 != airport3
+{txt}(0 real changes made)
+
+{com}. replace roundtrip = . if coupon_num == 3 & airport0 != airport3
+{txt}(0 real changes made)
+
+{com}. **round-trip with one stop in either trip -> we don't know if destination is airport1 or airport2
+. replace destination = "" if coupon_num == 3 & airport0 == airport3 
+{txt}(0 real changes made)
+
+{com}. replace roundtrip = . if coupon_num == 3 & airport0 == airport3
+{txt}(0 real changes made)
+
+{com}. 
+. * four coupons 
+. **one-way trip with three stops / round-trip plus two one-way tickets / round-trip with one stop plus a one-way ticket
+. *** [assumption2] any ticket with four coupons that doesn't match origin and destination are removed
+. replace destination = "" if coupon_num == 4 & airport0 != airport4
+{txt}(0 real changes made)
+
+{com}. replace roundtrip = . if coupon_num == 4 & airport0 != airport4
+{txt}(0 real changes made)
+
+{com}. ** symmetric round-trip with one stop each
+. replace destination = airport2 if coupon_num == 4 & airport0 == airport4 & airport1 == airport3
+{txt}(13,698,192 real changes made)
+
+{com}. replace roundtrip = 1  if coupon_num == 4 & airport0 == airport4 & airport1 == airport3
+{txt}(13,698,192 real changes made)
+
+{com}. **asymmetric round-trip with one stop each -> we cannot distinguish if destination is airport1 or airport3 
+. *** [assumption2] any round-trip ticket with one transfer each that has different transfer airports are removed
+. replace destination = ""  if coupon_num == 4 & airport0 == airport4 & airport1 != airport3
+{txt}(0 real changes made)
+
+{com}. replace roundtrip = . if coupon_num == 4 & airport0 == airport4 & airport1 != airport3
+{txt}(0 real changes made)
+
+{com}. 
+. order origin destination destination_final roundtrip, after(coupon_num)
+{txt}
+{com}. 
+. save "dta_clean/${c -(}dataset{c )-}_agg1", replace 
+{txt}{p 0 4 2}
+(file {bf}
+dta_clean/merged_agg1.dta{rm}
+not found)
+{p_end}
+{p 0 4 2}
+file {bf}
+dta_clean/merged_agg1.dta{rm}
+saved
+{p_end}
+
+{com}. 
+. * I want to count competitors in each market 
+. *fegen long market_id = group(coupon_num origin destination destination_final)
+. tostring coupon_num, gen(coupon_num_string)
+{txt}coupon_num_string generated as {res:str1}
+
+{com}. gen key = coupon_num_string + origin + destination + destination_final
+{txt}
+{com}. gegen long market_id = group(key)
+{res}{txt}{res}{txt}
+{com}. drop coupon_num_string key 
+{txt}
+{com}. 
+. /*
+> forvalues n=1/4 {c -(}
+>         fegen int tag`n' = tag(market_id carrier`n') if coupon_num >= `n'
+>         fegen int carrier`n'_total = total(tag`n') if coupon_num >= `n', by (market_id) 
+>         drop tag`n'
+> {c )-}
+> *br if market_id == 28338
+> */
+. 
+. gegen int tag1 = tag(market_id carrier1) if coupon_num >= 1
+{res}{txt}{res}{txt}
+{com}. gegen int carrier1_total = total(tag1) if coupon_num >= 1, by (market_id)
+{res}{txt}{res}{txt}
+{com}. gegen int tag2 = tag(market_id carrier2) if coupon_num >= 2
+{res}{txt}{res}{txt}
+{com}. gegen int carrier2_total = total(tag2) if coupon_num >= 2, by (market_id) 
+{res}{txt}{res}{txt}
+{com}. gegen int tag3 = tag(market_id carrier3) if coupon_num >= 3
+{res}{txt}{res}{txt}
+{com}. gegen int carrier3_total = total(tag3) if coupon_num >= 3, by (market_id) 
+{res}{txt}{res}{txt}
+{com}. gegen int tag4 = tag(market_id carrier4) if coupon_num >= 4
+{res}{txt}{res}{txt}
+{com}. gegen int carrier4_total = total(tag4) if coupon_num >= 4, by (market_id) 
+{res}{txt}{res}{txt}
+{com}. drop tag1 tag2 tag3 tag4 
+{txt}
+{com}. 
+. 
+. * I want to create a dummy indicator if Alaska ("AS") or Virgin ("VX") serves for the market
+. /* (Computationally expensive)
+> local merged AS VX
+> foreach m of local merged {c -(}
+>         forvalues n=1/4{c -(}
+>                 gen `m'_indicator`n' = (carrier`n' == "`m'") if carrier`n' != ""
+>                 fegen int tag_`m'`n' = tag(market_id `m'_indicator`n') if coupon_num >= `n'
+>                 fegen int market`n'_`m' = total(tag_`m'`n') if coupon_num >= `n', by (market_id)
+>                 drop `m'_indicator`n' tag_`m'`n'
+>                 *replace market`n'_`m' = . if market`n'_`m' == 0
+>                 replace market`n'_`m' = 0 if market`n'_`m' == 1
+>                 replace market`n'_`m' = 1 if market`n'_`m' == 2
+>         {c )-}
+> {c )-}
+> */
+. 
+. gen AS_indicator1 = (carrier1 == "AS") if carrier1 != ""
+{txt}
+{com}. gegen int tag_AS1 = tag(market_id AS_indicator1) if coupon_num >= 1
+{res}{txt}{res}{txt}
+{com}. gegen int market1_AS = total(tag_AS1) if coupon_num >= 1, by (market_id)
+{res}{txt}{res}{txt}
+{com}. drop AS_indicator1 tag_AS1
+{txt}
+{com}. replace market1_AS = 0 if market1_AS == 1
+{txt}(54,940,174 real changes made)
+
+{com}. replace market1_AS = 1 if market1_AS == 2
+{txt}(23,359,574 real changes made)
+
+{com}. 
+. gen AS_indicator2 = (carrier2 == "AS") if carrier2 != ""
+{txt}(11,425,886 missing values generated)
+
+{com}. gegen int tag_AS2 = tag(market_id AS_indicator2) if coupon_num >= 2
+{res}{txt}{res}{txt}
+{com}. gegen int market2_AS = total(tag_AS2) if coupon_num >= 2, by (market_id)
+{res}{txt}{res}{txt}
+{com}. drop AS_indicator2 tag_AS2
+{txt}
+{com}. replace market2_AS = 0 if market2_AS == 1
+{txt}(41,920,011 real changes made)
+
+{com}. replace market2_AS = 1 if market2_AS == 2
+{txt}(24,953,851 real changes made)
+
+{com}. 
+. gen AS_indicator3 = (carrier3 == "AS") if carrier3 != ""
+{txt}(50,819,898 missing values generated)
+
+{com}. gegen int tag_AS3 = tag(market_id AS_indicator3) if coupon_num >= 3
+{res}{txt}{res}{txt}
+{com}. gegen int market3_AS = total(tag_AS3) if coupon_num >= 3, by (market_id)
+{res}{txt}{res}{txt}
+{com}. drop AS_indicator3 tag_AS3
+{txt}
+{com}. replace market3_AS = 0 if market3_AS == 1
+{txt}(13,309,239 real changes made)
+
+{com}. replace market3_AS = 1 if market3_AS == 2
+{txt}(14,170,611 real changes made)
+
+{com}. 
+. gen AS_indicator4 = (carrier4 == "AS") if carrier4 != ""
+{txt}(57,153,384 missing values generated)
+
+{com}. gegen int tag_AS4 = tag(market_id AS_indicator4) if coupon_num >= 4
+{res}{txt}{res}{txt}
+{com}. gegen int market4_AS = total(tag_AS4) if coupon_num >= 4, by (market_id)
+{res}{txt}{res}{txt}
+{com}. drop AS_indicator4 tag_AS4
+{txt}
+{com}. replace market4_AS = 0 if market4_AS == 1
+{txt}(12,786,743 real changes made)
+
+{com}. replace market4_AS = 1 if market4_AS == 2
+{txt}(8,359,621 real changes made)
+
+{com}. 
+. gen VX_indicator1 = (carrier1 == "VX") if carrier1 != ""
+{txt}
+{com}. gegen int tag_VX1 = tag(market_id VX_indicator1) if coupon_num >= 1
+{res}{txt}{res}{txt}
+{com}. gegen int market1_VX = total(tag_VX1) if coupon_num >= 1, by (market_id)
+{res}{txt}{res}{txt}
+{com}. drop VX_indicator1 tag_VX1
+{txt}
+{com}. replace market1_VX = 0 if market1_VX == 1
+{txt}(67,164,171 real changes made)
+
+{com}. replace market1_VX = 1 if market1_VX == 2
+{txt}(11,135,577 real changes made)
+
+{com}. 
+. gen VX_indicator2 = (carrier2 == "VX") if carrier2 != ""
+{txt}(11,425,886 missing values generated)
+
+{com}. gegen int tag_VX2 = tag(market_id VX_indicator2) if coupon_num >= 2
+{res}{txt}{res}{txt}
+{com}. gegen int market2_VX = total(tag_VX2) if coupon_num >= 2, by (market_id)
+{res}{txt}{res}{txt}
+{com}. drop VX_indicator2 tag_VX2
+{txt}
+{com}. replace market2_VX = 0 if market2_VX == 1
+{txt}(56,106,216 real changes made)
+
+{com}. replace market2_VX = 1 if market2_VX == 2
+{txt}(10,767,646 real changes made)
+
+{com}. 
+. gen VX_indicator3 = (carrier3 == "VX") if carrier3 != ""
+{txt}(50,819,898 missing values generated)
+
+{com}. gegen int tag_VX3 = tag(market_id VX_indicator3) if coupon_num >= 3
+{res}{txt}{res}{txt}
+{com}. gegen int market3_VX = total(tag_VX3) if coupon_num >= 3, by (market_id)
+{res}{txt}{res}{txt}
+{com}. drop VX_indicator3 tag_VX3
+{txt}
+{com}. replace market3_VX = 0 if market3_VX == 1
+{txt}(21,677,627 real changes made)
+
+{com}. replace market3_VX = 1 if market3_VX == 2
+{txt}(5,802,223 real changes made)
+
+{com}. 
+. gen VX_indicator4 = (carrier4 == "VX") if carrier4 != ""
+{txt}(57,153,384 missing values generated)
+
+{com}. gegen int tag_VX4 = tag(market_id VX_indicator4) if coupon_num >= 4
+{res}{txt}{res}{txt}
+{com}. gegen int market4_VX = total(tag_VX4) if coupon_num >= 4, by (market_id)
+{res}{txt}{res}{txt}
+{com}. drop VX_indicator4 tag_VX4
+{txt}
+{com}. replace market4_VX = 0 if market4_VX == 1
+{txt}(18,524,215 real changes made)
+
+{com}. replace market4_VX = 1 if market4_VX == 2
+{txt}(2,622,149 real changes made)
+
+{com}. 
+. save "dta_clean/${c -(}dataset{c )-}_agg2", replace
+{txt}{p 0 4 2}
+(file {bf}
+dta_clean/merged_agg2.dta{rm}
+not found)
+{p_end}
+{p 0 4 2}
+file {bf}
+dta_clean/merged_agg2.dta{rm}
+saved
+{p_end}
+
+{com}. 
+. 
+{txt}end of do-file
+
+{com}. 
+. do "${c -(}rep_folder{c )-}/code/data_aggregation.do"
+{txt}
+{com}. // Data Aggregation File for DB1B public database
+. // Name: Tatsuki Kikugawa
+. 
+. use  "dta_clean/${c -(}dataset{c )-}_agg2", clear
+{txt}
+{com}. 
+. * you have to keep neighboring routes for aggregation from airport-pair to city-pair
+. *keep if market1_AS == 1 | market2_AS == 1 | market3_AS == 1 | market4_AS == 1 | market1_VX == 1 |  market2_VX == 1 |  market3_VX == 1 |  market4_VX == 1
+. collapse (rawsum) passenger (mean) fare restricted1 business1 first1 restricted2 business2 first2 restricted3 business3 first3 restricted4 business4 first4 carrier1_total carrier2_total carrier3_total carrier4_total market1_AS market2_AS market3_AS market4_AS market1_VX market2_VX market3_VX market4_VX [fw = passenger], by(quarter coupon_num market_id origin destination destination_final)
+{res}{txt}
+{com}. 
+. sort quarter coupon_num market_id
+{txt}
+{com}. 
+. import delimited "lookup/airports_codes.txt", clear 
+{res}{txt}(encoding automatically selected: ISO-8859-1)
+{text}(3 vars, 9,235 obs)
+
+{com}. 
+. drop worldareacode
+{txt}
+{com}. rename airportcode origin
+{res}{txt}
+{com}. save "lookup/airport_code_origin", replace
+{txt}{p 0 4 2}
+file {bf}
+lookup/airport_code_origin.dta{rm}
+saved
+{p_end}
+
+{com}. rename origin destination
+{res}{txt}
+{com}. save "lookup/airport_code_destination", replace
+{txt}{p 0 4 2}
+file {bf}
+lookup/airport_code_destination.dta{rm}
+saved
+{p_end}
+
+{com}. rename destination destination_final
+{res}{txt}
+{com}. save "lookup/airport_code_destination_final", replace
+{txt}{p 0 4 2}
+file {bf}
+lookup/airport_code_destination_final.dta{rm}
+saved
+{p_end}
+
+{com}. 
+. use "dta_clean/${c -(}dataset{c )-}_agg", clear
+{err}{p 0 4 2}
+file {bf:{err}dta_clean/merged_agg.dta}
+not found
+{p_end}
+{txt}{search r(601), local:r(601);}
+
+end of do-file
+{search r(601), local:r(601);}
+
+end of do-file
+
+{search r(601), local:r(601);}
+
+{com}. do "/var/folders/x8/j5kfrbxj3sd8zff26jdb_07h0000gn/T//SD01541.000000"
+{txt}
+{com}. 
+. use "dta_clean/${c -(}dataset{c )-}_agg2", clear
+{txt}
+{com}. merge m:1 origin using "lookup/airport_code_origin"
+{res}

@@ -1,0 +1,62 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Fixed Effects Regression: post4 revenue}
+\begin{tabular}{l*{6}{c}}
+\toprule
+                    &\multicolumn{3}{c}{OLS}                                          &\multicolumn{3}{c}{Fixed Effects}                                \\\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}&\multicolumn{1}{c}{(5)}&\multicolumn{1}{c}{(6)}\\
+                    &\multicolumn{1}{c}{lrevenue}&\multicolumn{1}{c}{lrevenue}&\multicolumn{1}{c}{lrevenue}&\multicolumn{1}{c}{lrevenue}&\multicolumn{1}{c}{lrevenue}&\multicolumn{1}{c}{lrevenue}\\
+\midrule
+ASVX market $\times$ Post&     0.14385\sym{***}&     0.14659\sym{***}&     0.07617\sym{***}&     0.04462\sym{***}&     0.05407\sym{***}&     0.06165\sym{***}\\
+                    &   (0.00428)         &   (0.00364)         &   (0.00454)         &   (0.00532)         &   (0.00449)         &   (0.00477)         \\
+\addlinespace
+LCC ratio $\times$ Post&     0.12648\sym{***}&     0.06745\sym{***}&    -0.06309\sym{***}&    -0.05561\sym{***}&    -0.09623\sym{***}&    -0.08394\sym{***}\\
+                    &   (0.00836)         &   (0.00738)         &   (0.00928)         &   (0.01079)         &   (0.00946)         &   (0.00966)         \\
+\addlinespace
+ASVX market $\times$ LCC ratio $\times$ Post&    -0.15667\sym{***}&    -0.14982\sym{***}&    -0.06814\sym{***}&    -0.00711         &    -0.01440         &    -0.04976\sym{***}\\
+                    &   (0.01627)         &   (0.01303)         &   (0.01362)         &   (0.01756)         &   (0.01419)         &   (0.01414)         \\
+\addlinespace
+Number of coupons   &                     &    -0.25105\sym{***}&    -0.24452\sym{***}&                     &    -0.31579\sym{***}&    -0.31941\sym{***}\\
+                    &                     &   (0.04333)         &   (0.04348)         &                     &   (0.04369)         &   (0.04414)         \\
+\addlinespace
+\shortstack{Roundtrip \\ (dummy)}&                     &     1.22726\sym{***}&     1.24626\sym{***}&                     &     1.32298\sym{***}&     1.33458\sym{***}\\
+                    &                     &   (0.07958)         &   (0.07980)         &                     &   (0.08017)         &   (0.08097)         \\
+\addlinespace
+\shortstack{Transfer \\ (dummy)}&                     &    -0.33571\sym{***}&    -0.33758\sym{***}&                     &    -0.20854\sym{***}&    -0.20162\sym{***}\\
+                    &                     &   (0.06783)         &   (0.06828)         &                     &   (0.06809)         &   (0.06902)         \\
+\addlinespace
+Restricted seat ratio&                     &                     &     0.05631\sym{***}&                     &                     &     0.11700\sym{***}\\
+                    &                     &                     &   (0.01159)         &                     &                     &   (0.01390)         \\
+\addlinespace
+Business class ratio&                     &                     &     0.09005         &                     &                     &     0.51902\sym{***}\\
+                    &                     &                     &   (0.06660)         &                     &                     &   (0.07382)         \\
+\addlinespace
+First class ratio   &                     &                     &    -0.08537\sym{***}&                     &                     &    -0.11506\sym{***}\\
+                    &                     &                     &   (0.01874)         &                     &                     &   (0.01950)         \\
+\addlinespace
+Total # of carriers $\times$ Post&                     &                     &     0.00255\sym{***}&                     &                     &     0.00152\sym{***}\\
+                    &                     &                     &   (0.00044)         &                     &                     &   (0.00048)         \\
+\addlinespace
+Total # of LCC carriers $\times$ Post&                     &                     &     0.00735\sym{***}&                     &                     &     0.00148         \\
+                    &                     &                     &   (0.00156)         &                     &                     &   (0.00163)         \\
+\addlinespace
+Southwest dummy $\times$ Post&                     &                     &     0.00957\sym{*}  &                     &                     &    -0.00362         \\
+                    &                     &                     &   (0.00497)         &                     &                     &   (0.00494)         \\
+\addlinespace
+Number of aiports in origin $\times$ Post&                     &                     &     0.00732\sym{***}&                     &                     &    -0.00082         \\
+                    &                     &                     &   (0.00268)         &                     &                     &   (0.00292)         \\
+\addlinespace
+Number of aiports in destination $\times$ Post&                     &                     &     0.01126\sym{***}&                     &                     &     0.00397         \\
+                    &                     &                     &   (0.00272)         &                     &                     &   (0.00303)         \\
+\midrule
+Market FE           &          No         &          No         &          No         &         Yes         &         Yes         &         Yes         \\
+Time FE             &          No         &          No         &          No         &         Yes         &         Yes         &         Yes         \\
+Itineary Controls   &          No         &         Yes         &         Yes         &          No         &         Yes         &         Yes         \\
+Other Controls      &          No         &          No         &         Yes         &          No         &          No         &         Yes         \\
+N                   &      131730         &      131730         &      131726         &      131730         &      131730         &      131726         \\
+R^2                 &                     &                     &                     &       0.269         &       0.401         &       0.403         \\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{7}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+\end{table}

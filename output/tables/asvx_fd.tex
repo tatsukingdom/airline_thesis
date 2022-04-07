@@ -1,0 +1,46 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{\Centerstack{First Difference Regression\\Regression of Alaska/Virgin airfares} \label{asvxfd}}
+\begin{tabular}{l*{4}{c}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}\\
+                    &\multicolumn{1}{c}{Diff\_lqfare}&\multicolumn{1}{c}{Diff\_lqfare}&\multicolumn{1}{c}{Diff\_lqfare}&\multicolumn{1}{c}{Diff\_lqfare}\\
+\midrule
+LCC ratio           &    -0.19205\sym{***}&    -0.19214\sym{***}&    -0.18023\sym{***}&    -0.23119\sym{***}\\
+                    &   (0.01169)         &   (0.01155)         &   (0.01130)         &   (0.01359)         \\
+\addlinespace
+Number of coupons   &                     &                     &    -0.24552\sym{***}&    -0.11269         \\
+                    &                     &                     &   (0.07425)         &   (0.07221)         \\
+\addlinespace
+\Centerstack{Roundtrip \\ (dummy)}&                     &                     &     0.65691\sym{***}&     0.51328\sym{***}\\
+                    &                     &                     &   (0.11338)         &   (0.11342)         \\
+\addlinespace
+\Centerstack{Transfer \\ (dummy)}&                     &                     &     0.39179\sym{***}&     0.22959\sym{**} \\
+                    &                     &                     &   (0.10179)         &   (0.10221)         \\
+\addlinespace
+Restricted seat ratio&                     &                     &                     &     0.82659\sym{***}\\
+                    &                     &                     &                     &   (0.12758)         \\
+\addlinespace
+Business class ratio&                     &                     &                     &    -0.29476\sym{*}  \\
+                    &                     &                     &                     &   (0.15497)         \\
+\addlinespace
+First class ratio   &                     &                     &                     &     0.91908\sym{***}\\
+                    &                     &                     &                     &   (0.19535)         \\
+\addlinespace
+Total # of carriers $\times$ Post&                     &                     &                     &    -0.00181\sym{*}  \\
+                    &                     &                     &                     &   (0.00102)         \\
+\addlinespace
+Total # of LCC carriers $\times$ Post&                     &                     &                     &     0.01531\sym{***}\\
+                    &                     &                     &                     &   (0.00261)         \\
+\addlinespace
+Southwest dummy $\times$ Post&                     &                     &                     &    -0.08609\sym{***}\\
+                    &                     &                     &                     &   (0.01076)         \\
+\midrule
+Time FE             &          No         &         Yes         &         Yes         &         Yes         \\
+N                   &        1500         &        1500         &        1500         &        1500         \\
+R^2                 &       0.164         &       0.179         &       0.218         &       0.339         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+\end{table}
