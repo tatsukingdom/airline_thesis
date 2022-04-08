@@ -1,7 +1,7 @@
 # Description
 
 Replication Code for Tatsuki Kikugawa's paper:
-**"The Impact of LCCs on Airfares of a Merged Airline: Evidence from Alaska Airlines-Virgin America Merger"**
+**"The Impact of Existing LCCs on Airfares of a Merged Airline: Evidence from Alaska Airlines-Virgin America Merger"**
 
 This folder contains replication code that replicates publicly replicable figures and tables in the paper using Stata. 
 To run the exhibit replication code, update the file path in /code/analysis.do to the location of the replication folder on your computer. Output is saved in /output/
