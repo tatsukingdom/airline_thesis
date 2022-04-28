@@ -11,11 +11,13 @@ All heavy files (>100MB) cannot be included in this repository, but I am happy t
 
 ## Steps:
 
+0. If you don't request heavy files, you first need to unzip all the files in input/zip and render them to stata files by using code/others/data_reading.py. (Make sure that all the stata files are in input/dta_clean folder.
+
 1. Save the replication code folder in your desired directory and change your stata directory to that location.
 
 2. Open the file master.do and set the global macro on line 6 to be the filepath of the replication folder.
 
-3. Running data cleaning files (data_clean.do, data_preagg.do, and data_aggregation.do) takes at least 12 hours with potential RAM shortage; thus, I recommend commenting out line 22-26 in master.do and just run analysis.do.
+3. Run data cleaning files (data_clean.do, data_preagg.do, and data_aggregation.do) takes at least 12 hours with potential RAM shortage; thus, I recommend commenting out line 22-26 in master.do and just run analysis.do.
 
 
 ## Caveat:
