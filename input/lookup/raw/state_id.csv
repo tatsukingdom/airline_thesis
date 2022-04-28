@@ -1,0 +1,56 @@
+Latest available 2021 data is July  
+ORIGIN_WAC,Description,Sum(PASSENGERS)
+"1","Alaska",2129910
+"2","Hawaii",5908664
+"3","Puerto Rico",2764574
+"4","U.S. Virgin Islands",607131
+"5","U.S. Pacific Trust Territories and Possessions",98996
+"11","Connecticut",1097367
+"12","Maine",544008
+"13","Massachusetts",4661713
+"14","New Hampshire",243470
+"15","Rhode Island",578274
+"16","Vermont",159885
+"21","New Jersey",5714117
+"22","New York",9886827
+"23","Pennsylvania",6958276
+"31","Delaware",7253
+"33","Florida",39538143
+"34","Georgia",18258749
+"35","Maryland",4696900
+"36","North Carolina",14193245
+"37","South Carolina",2596393
+"38","Virginia",7403538
+"39","West Virginia",178201
+"41","Illinois",16122050
+"42","Indiana",2253806
+"43","Michigan",6954267
+"44","Ohio",3773845
+"45","Wisconsin",1876593
+"51","Alabama",983595
+"52","Kentucky",2604091
+"53","Mississippi",433853
+"54","Tennessee",5541204
+"61","Iowa",859380
+"62","Kansas",396485
+"63","Minnesota",6248165
+"64","Missouri",4802460
+"65","Nebraska",1068518
+"66","North Dakota",475038
+"67","South Dakota",469106
+"71","Arkansas",765573
+"72","Louisiana",2739122
+"73","Oklahoma",1476599
+"74","Texas",34568163
+"81","Arizona",11115289
+"82","Colorado",15889521
+"83","Idaho",1148088
+"84","Montana",1289873
+"85","Nevada",10447297
+"86","New Mexico",869927
+"87","Utah",5735382
+"88","Wyoming",393115
+"91","California",29677737
+"92","Oregon",3518516
+"93","Washington",9837807
+"All Rows","All Rows (including those not displayed)",312560099

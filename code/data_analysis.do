@@ -10,7 +10,6 @@
 *******************************
 cd "${rep_folder}"
 clear
-/*
 use "input/dta_clean/${dataset}_agg2", clear
 
 gen coupon_num2 = coupon_num if inlist(coupon_num, 1, 4)
@@ -44,7 +43,7 @@ esttab data* using "output/tables/sumstats.tex", replace tex ///
 		coeflabels(fare "\Centerstack{Market airfaree \\ (mean)}" passenger "Total passengers" revenue "Total revenue" lcc_ratio_pre "Ratio of LCC seats" coupon_num "\Centerstack{Number of coupons \\ (mean)}"roundtrip "\Centerstack{Roundtrip \\ (mean of dummy)}" transfer  "\Centerstack{Transfer \\ (mean of dummy)}" restricted "Ratio of restricted tickets" business "Ratio of business-class" first "Ratio of first-class" carrier_total "Total carriers" carrier_total_lcc "Total LCC carriers" market_AS "\Centerstack{Alaska Route \\ (mean of dummy)}" market_VX "\Centerstack{Virgin Route \\ (mean of dummy)}" market_WN "\Centerstack{Southwest Route \\ (mean of dummy)}") ///
 		title("Summary Statistics" \label{sumstats}) ///
 		mtitle("\shortstack{Airport-Pair \\ All \\ All Airlines}" "\shortstack{City-Pair \\ All \\ All Airlines}" "\shortstack{City-Pair \\ Alaska+Virgin Markets \\ All Airlines}"  "\shortstack{City-Pair \\ Alaska+Virgin Markets \\ Alaska+Virgin}")
-*/
+
 
 **********************************************
 *** 7-1-1. First Difference City-Pair ASVX ***
@@ -123,8 +122,8 @@ xi: xtreg diff_lq`dep' lcc_ratio_pre i.q `itineary_contr' `seat_contr' `interact
 	*/
 
 esttab asvx_fd* using "output/tables/asvx_fd.tex", replace booktabs ///
-	keep(lcc_ratio_pre `itineary_contr' `seat_contr' `interactions') label b(5) se(5) star(* 0.10 ** 0.05 *** 0.01) noabbrev ///
-	coeflabels(lcc_ratio_pre "LCC ratio" coupon_num_diff "Number of coupons" roundtrip_diff "\Centerstack{Roundtrip \\ (dummy)}" transfer_diff "\Centerstack{Transfer \\ (dummy)}" restricted_diff "Restricted seat ratio" business_diff "Business class ratio" first_diff "First class ratio" carrier_total_`post' "Total # of carriers $\times$ Post" carrier_total_lcc_`post' "Total # of LCC carriers $\times$ Post" market_WN_`post' "Southwest dummy $\times$ Post") ///
+	keep(_cons lcc_ratio_pre `itineary_contr' `seat_contr' `interactions') label b(5) se(5) star(* 0.10 ** 0.05 *** 0.01) noabbrev ///
+	coeflabels(_cons "Post" lcc_ratio_pre "LCC ratio" coupon_num_diff "Number of coupons" roundtrip_diff "\Centerstack{Roundtrip \\ (dummy)}" transfer_diff "\Centerstack{Transfer \\ (dummy)}" restricted_diff "Restricted seat ratio" business_diff "Business class ratio" first_diff "First class ratio" carrier_total_`post' "Total # of carriers $\times$ Post" carrier_total_lcc_`post' "Total # of LCC carriers $\times$ Post" market_WN_`post' "Southwest dummy $\times$ Post") ///
 	stats(qfe N r2, fmt(0 0 a3) ///
 		labels("Time FE" "N" "R^2")) ///
 	title("\Centerstack{First Difference Regression\\Regression of Alaska/Virgin airfares}" \label{asvxfd})
@@ -211,12 +210,33 @@ esttab asvx_fe_* using "output/tables/asvx_fe.tex", replace booktabs ///
 
 
 
+gen lcc_ratio_group = 0 if inrange(lcc_ratio_pre, 0, 0.1)
+replace lcc_ratio_group = 1 if inrange(lcc_ratio_pre, 0.1, 0.3)
+replace lcc_ratio_group = 2 if inrange(lcc_ratio_pre, 0.3, 0.6)
+replace lcc_ratio_group = 3 if inrange(lcc_ratio_pre, 0.6, 1.0)
+label var lcc_ratio_group "LCC Ratio Group"
+label define lcc_ratio_group 0 "No LCC" 1 "Low LCC" 2 "Medium LCC" 3 "High LCC"
+label values lcc_ratio_group lcc_ratio_group
+
+label var fare "Fare (mean)"
+label var post4 "After April 2018"
+label define post4 0 "Before" 1 "After"
+label values post4 post4
+egen mfare = mean(fare), by(lcc_ratio_group)
+
+*graph box fare, over(post4) over(lcc_ratio_group) //medtype(marker) medmarker(msymbol(diamond))
+graph box fare, over(post4) over(lcc_ratio_group)
+*graph box fare, over(post4) over(market_ASVX) over(lcc_ratio_group)
+*graph box fare, over(market_ASVX) over(lcc_ratio_group)		
+		
+
+
 ******************************************
 ***  7-2. Fixed Effects City-Pair All  ***
 ******************************************
 use  "input/dta_clean/${dataset}_agg3_city", clear
 
-local dep revenue
+local dep fare
 local post post4
 gen lpassenger=log(passenger)
 gen market_ASVX = (market_AS > 0 | market_VX > 0)
@@ -292,8 +312,9 @@ esttab any_ols* using "output/tables/`post'`dep'.tex", replace booktabs ///
 	coeflabels(mk_`post' "ASVX market $\times$ Post" lcc_`post' "LCC ratio $\times$ Post" mk_`post'_lcc "ASVX market $\times$ LCC ratio $\times$ Post" coupon_num "Number of coupons" roundtrip "\shortstack{Roundtrip \\ (dummy)}" transfer "\shortstack{Transfer \\ (dummy)}" restricted "Restricted seat ratio" business "Business class ratio" first "First class ratio" carrier_total_`post' "Total # of carriers $\times$ Post" carrier_total_lcc_`post' "Total # of LCC carriers $\times$ Post" market_WN_`post' "Southwest dummy $\times$ Post" apt_num_origin_`post' "Number of aiports in origin $\times$ Post" apt_num_destination_city_`post' "Number of aiports in destination $\times$ Post") ///
 	stats(mfe qfe itinearycontrol control N r2, fmt(0 0 0 0 0 a3) ///
 		labels("Market FE" "Time FE" "Itineary Controls" "Other Controls" "N" "R^2")) ///
-	title("\Centerstack{Fixed Effects Regression\\Regression of All Airlines' \capitalisewords{`dep'}s}" \label{`post'`dep'}) ///
+	title("\Centerstack{Fixed Effects Regression\\Regression of the market average `dep's of Alaska+Virgin routes}" \label{`post'`dep'}) ///
 	mgroups("OLS" "Fixed Effects", pattern(1 0 0 1 0 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span})) 
+	*\capitalisewords{`dep'}s
 
 gen lcc_ratio_group = 0 if inrange(lcc_ratio_pre, 0, 0.1)
 replace lcc_ratio_group = 1 if inrange(lcc_ratio_pre, 0.1, 0.3)
@@ -304,7 +325,7 @@ label define lcc_ratio_group 0 "No LCC" 1 "Low LCC" 2 "Medium LCC" 3 "High LCC"
 label values lcc_ratio_group lcc_ratio_group
 
 label var fare "Fare (mean)"
-label var post4 "After Jan 2017"
+label var post4 "After April 2018"
 label define post4 0 "Before" 1 "After"
 label values post4 post4
 
@@ -319,6 +340,173 @@ graph box fare, over(market_ASVX) over(post4) over(lcc_ratio_group)
 *graph box fare, over(post4) over(market_ASVX) over(lcc_ratio_group)
 *graph box fare, over(market_ASVX) over(lcc_ratio_group)		
 		
+
+***********************************************
+***  7-3. Fixed Effects City-Pair w/o ASVX  ***
+***********************************************
+use  "input/dta_clean/${dataset}_agg3_city_nonASVX", clear
+
+local dep fare
+local post post4
+gen lpassenger=log(passenger)
+qui bysort market_id (lcc_ratio_pre): replace lcc_ratio_pre=lcc_ratio_pre[1] if post4 == 1
+gen lcc_`post' = lcc_ratio_pre * `post'
+
+local seat_contr restricted business first
+local itineary_contr coupon_num roundtrip transfer
+
+gen carrier_total_`post' =  carrier_total * `post'
+gen carrier_total_lcc_`post' = carrier_total_lcc * `post' 
+gen market_WN_`post' = market_WN  * `post'
+gen apt_num_origin_`post' = apt_num_origin * `post' 
+gen apt_num_destination_city_`post' = apt_num_destination_city * `post'
+local interactions carrier_total_`post' carrier_total_lcc_`post' market_WN_`post' apt_num_origin_`post' apt_num_destination_city_`post'
+
+xi: xtreg l`dep' lcc_`post', cluster(market_id)
+	eststo any_ols_1
+	estadd local mfe "No" : any_ols_1
+	estadd local qfe "No" : any_ols_1
+	estadd local itinearycontrol "No" : any_ols_1
+	estadd local control "No" : any_ols_1
+	
+xi: xtreg l`dep' lcc_`post' `itineary_contr', cluster(market_id)
+	eststo any_ols_2
+	estadd local mfe "No" : any_ols_2
+	estadd local qfe "No" : any_ols_2
+	estadd local itinearycontrol "Yes" : any_ols_2
+	estadd local control "No" : any_ols_2
+
+xi: xtreg l`dep' lcc_`post' `itineary_contr' `seat_contr' `interactions', cluster(market_id)
+	eststo any_ols_3
+	estadd local mfe "No" : any_ols_3
+	estadd local qfe "No" : any_ols_3
+	estadd local itinearycontrol "Yes" : any_ols_3
+	estadd local control "Yes" : any_ols_3
+	
+xi: xtreg l`dep' lcc_`post' i.quarter, fe cluster(market_id)
+	eststo any_ols_4
+	estadd local mfe "Yes" : any_ols_4
+	estadd local qfe "Yes" : any_ols_4
+	estadd local itinearycontrol "No" : any_ols_4
+	estadd local control "No" : any_ols_4
+
+xi: xtreg l`dep' lcc_`post' i.quarter `itineary_contr', fe cluster(market_id)
+	eststo any_ols_5
+	estadd local mfe "Yes" : any_ols_5
+	estadd local qfe "Yes" : any_ols_5
+	estadd local itinearycontrol "Yes" : any_ols_5
+	estadd local control "No" : any_ols_5
+
+xi: xtreg l`dep' lcc_`post' post4 i.quarter `itineary_contr' `seat_contr' `interactions', fe cluster(market_id)
+	eststo any_ols_6
+	estadd local mfe "Yes" : any_ols_6
+	estadd local qfe "Yes" : any_ols_6
+	estadd local itinearycontrol "Yes" : any_ols_6
+	estadd local control "Yes" : any_ols_6
+
+* Combine all OLS estimates to one table
+/*
+local dep fare
+local post post4
+local seat_contr restricted business first
+local itineary_contr coupon_num roundtrip transfer
+local interactions carrier_total_`post' carrier_total_lcc_`post' market_WN_`post' apt_num_origin_`post' apt_num_destination_city_`post'
+*/
+
+esttab any_ols* using "output/tables/`post'`dep'_nonASVX.tex", replace booktabs ///
+	keep(lcc_`post' `itineary_contr' `seat_contr' `interactions') label b(5) se(5) star(* 0.10 ** 0.05 *** 0.01) noabbrev ///
+	coeflabels(lcc_`post' "LCC ratio $\times$ Post" coupon_num "Number of coupons" roundtrip "\shortstack{Roundtrip \\ (dummy)}" transfer "\shortstack{Transfer \\ (dummy)}" restricted "Restricted seat ratio" business "Business class ratio" first "First class ratio" carrier_total_`post' "Total # of carriers $\times$ Post" carrier_total_lcc_`post' "Total # of LCC carriers $\times$ Post" market_WN_`post' "Southwest dummy $\times$ Post" apt_num_origin_`post' "Number of aiports in origin $\times$ Post" apt_num_destination_city_`post' "Number of aiports in destination $\times$ Post") ///
+	stats(mfe qfe itinearycontrol control N r2, fmt(0 0 0 0 0 a3) ///
+		labels("Market FE" "Time FE" "Itineary Controls" "Other Controls" "N" "R^2")) ///
+	title("\Centerstack{Fixed Effects Regression\\Regression of the market `dep's of Alaska+Virgin routes excluding Alaska+Virgin `dep's}" \label{`post'`dep'_nonASVX}) ///
+	mgroups("OLS" "Fixed Effects", pattern(1 0 0 1 0 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span})) 
+
+		
+*******************************
+***  7-X. Robustness Check  ***
+*******************************
+use  "input/dta_clean/${dataset}_agg3_city", clear
+drop if tin(,2015q4)
+
+local dep fare
+local post post4
+gen lpassenger=log(passenger)
+gen market_ASVX = (market_AS > 0 | market_VX > 0)
+qui bysort market_id (lcc_ratio_pre): replace lcc_ratio_pre=lcc_ratio_pre[1] if post4 == 1
+gen mk_`post' = market_ASVX * `post'
+gen lcc_`post' = lcc_ratio_pre * `post'
+gen mk_`post'_lcc = mk_`post'*lcc_ratio_pre
+
+
+
+local seat_contr restricted business first
+local itineary_contr coupon_num roundtrip transfer
+
+gen carrier_total_`post' =  carrier_total * `post'
+gen carrier_total_lcc_`post' = carrier_total_lcc * `post' 
+gen market_WN_`post' = market_WN  * `post'
+gen apt_num_origin_`post' = apt_num_origin * `post' 
+gen apt_num_destination_city_`post' = apt_num_destination_city * `post'
+local interactions carrier_total_`post' carrier_total_lcc_`post' market_WN_`post' apt_num_origin_`post' apt_num_destination_city_`post'
+
+xi: xtreg l`dep' mk_`post' lcc_`post' mk_`post'_lcc, cluster(market_id)
+	eststo any_ols_1
+	estadd local mfe "No" : any_ols_1
+	estadd local qfe "No" : any_ols_1
+	estadd local itinearycontrol "No" : any_ols_1
+	estadd local control "No" : any_ols_1
+	
+xi: xtreg l`dep' mk_`post' lcc_`post' mk_`post'_lcc `itineary_contr', cluster(market_id)
+	eststo any_ols_2
+	estadd local mfe "No" : any_ols_2
+	estadd local qfe "No" : any_ols_2
+	estadd local itinearycontrol "Yes" : any_ols_2
+	estadd local control "No" : any_ols_2
+
+xi: xtreg l`dep' mk_`post' lcc_`post' mk_`post'_lcc `itineary_contr' `seat_contr' `interactions', cluster(market_id)
+	eststo any_ols_3
+	estadd local mfe "No" : any_ols_3
+	estadd local qfe "No" : any_ols_3
+	estadd local itinearycontrol "Yes" : any_ols_3
+	estadd local control "Yes" : any_ols_3
+	
+xi: xtreg l`dep' mk_`post' lcc_`post' mk_`post'_lcc i.quarter, fe cluster(market_id)
+	eststo any_ols_4
+	estadd local mfe "Yes" : any_ols_4
+	estadd local qfe "Yes" : any_ols_4
+	estadd local itinearycontrol "No" : any_ols_4
+	estadd local control "No" : any_ols_4
+
+xi: xtreg l`dep' mk_`post' lcc_`post' mk_`post'_lcc i.quarter `itineary_contr', fe cluster(market_id)
+	eststo any_ols_5
+	estadd local mfe "Yes" : any_ols_5
+	estadd local qfe "Yes" : any_ols_5
+	estadd local itinearycontrol "Yes" : any_ols_5
+	estadd local control "No" : any_ols_5
+
+xi: xtreg l`dep' mk_`post' lcc_`post' mk_`post'_lcc i.quarter `itineary_contr' `seat_contr' `interactions', fe cluster(market_id)
+	eststo any_ols_6
+	estadd local mfe "Yes" : any_ols_6
+	estadd local qfe "Yes" : any_ols_6
+	estadd local itinearycontrol "Yes" : any_ols_6
+	estadd local control "Yes" : any_ols_6
+
+* Combine all OLS estimates to one table
+/*
+local dep fare
+local post post4
+local seat_contr restricted business first
+local itineary_contr coupon_num roundtrip transfer
+local interactions carrier_total_`post' carrier_total_lcc_`post' market_WN_`post' apt_num_origin_`post' apt_num_destination_city_`post'
+*/
+
+esttab any_ols* using "output/tables/`post'`dep'_robustness.tex", replace booktabs ///
+	keep(mk_`post' lcc_`post' mk_`post'_lcc `itineary_contr' `seat_contr' `interactions') label b(5) se(5) star(* 0.10 ** 0.05 *** 0.01) noabbrev ///
+	coeflabels(mk_`post' "ASVX market $\times$ Post" lcc_`post' "LCC ratio $\times$ Post" mk_`post'_lcc "ASVX market $\times$ LCC ratio $\times$ Post" coupon_num "Number of coupons" roundtrip "\shortstack{Roundtrip \\ (dummy)}" transfer "\shortstack{Transfer \\ (dummy)}" restricted "Restricted seat ratio" business "Business class ratio" first "First class ratio" carrier_total_`post' "Total # of carriers $\times$ Post" carrier_total_lcc_`post' "Total # of LCC carriers $\times$ Post" market_WN_`post' "Southwest dummy $\times$ Post" apt_num_origin_`post' "Number of aiports in origin $\times$ Post" apt_num_destination_city_`post' "Number of aiports in destination $\times$ Post") ///
+	stats(mfe qfe itinearycontrol control N r2, fmt(0 0 0 0 0 a3) ///
+		labels("Market FE" "Time FE" "Itineary Controls" "Other Controls" "N" "R^2")) ///
+	title("\Centerstack{Robustness Check—Fixed Effects Regression\\Regression of All Airlines' \capitalisewords{`dep'}s}" \label{`post'`dep'}) ///
+	mgroups("OLS" "Fixed Effects", pattern(1 0 0 1 0 0) prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span})) 
 
 		
 		

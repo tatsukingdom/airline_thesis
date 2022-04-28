@@ -1,0 +1,56 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{\Centerstack{Fixed Effects Regression\\Regression of the market fares of Alaska+Virgin routes excluding Alaska+Virgin fares} \label{post4fare\_nonASVX}}
+\begin{tabular}{l*{6}{c}}
+\toprule
+                    &\multicolumn{3}{c}{OLS}                                          &\multicolumn{3}{c}{Fixed Effects}                                \\\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}&\multicolumn{1}{c}{(5)}&\multicolumn{1}{c}{(6)}\\
+                    &\multicolumn{1}{c}{lfare}&\multicolumn{1}{c}{lfare}&\multicolumn{1}{c}{lfare}&\multicolumn{1}{c}{lfare}&\multicolumn{1}{c}{lfare}&\multicolumn{1}{c}{lfare}\\
+\midrule
+LCC ratio $\times$ Post&    -0.11010\sym{***}&    -0.05375\sym{***}&    -0.07713\sym{***}&     0.00425         &    -0.04673\sym{***}&    -0.03433\sym{***}\\
+                    &   (0.00390)         &   (0.00326)         &   (0.00515)         &   (0.00566)         &   (0.00497)         &   (0.00559)         \\
+\addlinespace
+Number of coupons   &                     &    -0.03925\sym{*}  &    -0.02871         &                     &    -0.01669         &    -0.00058         \\
+                    &                     &   (0.02290)         &   (0.02232)         &                     &   (0.02393)         &   (0.02337)         \\
+\addlinespace
+\shortstack{Roundtrip \\ (dummy)}&                     &     0.76423\sym{***}&     0.78014\sym{***}&                     &     0.69884\sym{***}&     0.67746\sym{***}\\
+                    &                     &   (0.04021)         &   (0.03932)         &                     &   (0.04133)         &   (0.04058)         \\
+\addlinespace
+\shortstack{Transfer \\ (dummy)}&                     &     0.57843\sym{***}&     0.56823\sym{***}&                     &     0.52003\sym{***}&     0.48606\sym{***}\\
+                    &                     &   (0.03635)         &   (0.03547)         &                     &   (0.03753)         &   (0.03681)         \\
+\addlinespace
+Restricted seat ratio&                     &                     &     0.15811\sym{***}&                     &                     &     0.15354\sym{***}\\
+                    &                     &                     &   (0.00892)         &                     &                     &   (0.01111)         \\
+\addlinespace
+Business class ratio&                     &                     &     0.93942\sym{***}&                     &                     &     1.22027\sym{***}\\
+                    &                     &                     &   (0.05101)         &                     &                     &   (0.06236)         \\
+\addlinespace
+First class ratio   &                     &                     &    -0.04970\sym{***}&                     &                     &    -0.07404\sym{***}\\
+                    &                     &                     &   (0.00932)         &                     &                     &   (0.00972)         \\
+\addlinespace
+Total # of carriers $\times$ Post&                     &                     &    -0.00238\sym{***}&                     &                     &    -0.00117\sym{***}\\
+                    &                     &                     &   (0.00034)         &                     &                     &   (0.00037)         \\
+\addlinespace
+Total # of LCC carriers $\times$ Post&                     &                     &    -0.00031         &                     &                     &    -0.00446\sym{***}\\
+                    &                     &                     &   (0.00112)         &                     &                     &   (0.00114)         \\
+\addlinespace
+Southwest dummy $\times$ Post&                     &                     &     0.00806\sym{**} &                     &                     &     0.00952\sym{**} \\
+                    &                     &                     &   (0.00389)         &                     &                     &   (0.00393)         \\
+\addlinespace
+Number of aiports in origin $\times$ Post&                     &                     &     0.00968\sym{***}&                     &                     &     0.02024\sym{***}\\
+                    &                     &                     &   (0.00204)         &                     &                     &   (0.00235)         \\
+\addlinespace
+Number of aiports in destination $\times$ Post&                     &                     &     0.00949\sym{***}&                     &                     &     0.02115\sym{***}\\
+                    &                     &                     &   (0.00194)         &                     &                     &   (0.00229)         \\
+\midrule
+Market FE           &          No         &          No         &          No         &         Yes         &         Yes         &         Yes         \\
+Time FE             &          No         &          No         &          No         &         Yes         &         Yes         &         Yes         \\
+Itineary Controls   &          No         &         Yes         &         Yes         &          No         &         Yes         &         Yes         \\
+Other Controls      &          No         &          No         &         Yes         &          No         &          No         &         Yes         \\
+N                   &      126693         &      126693         &      126689         &      126693         &      126693         &      126689         \\
+R^2                 &                     &                     &                     &       0.106         &       0.308         &       0.330         \\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{7}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+\end{table}
